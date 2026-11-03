@@ -3,9 +3,11 @@
 	email {$ACME_EMAIL}
 }
 
-# DOMAIN = the public name, e.g. license.karnex.in (DNS A record -> the server's Elastic IP).
-# Caddy gets and renews the HTTPS certificate by itself; http:// redirects to https://.
-{$DOMAIN} {
+# DOMAIN = the public name, e.g. license.karnexgroup.com (DNS A record -> the server's Elastic IP).
+# EXTRA_DOMAINS = optional further names served the same way (space-separated), e.g. the old
+# <ip-with-dashes>.sslip.io address while apps still use it.
+# Caddy gets and renews the HTTPS certificates by itself; http:// redirects to https://.
+{$DOMAIN} {$EXTRA_DOMAINS} {
 	encode zstd gzip
 
 	header {
