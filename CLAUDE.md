@@ -57,7 +57,7 @@ verification/       server/portal checks only (postgres/*.mjs, portal-e2e, sdk-c
 integration-examples/  generic licence-client SDKs (C#, Node), curl examples
 legacy/             archived old VehSim licence server (not used)
 deploy/              AWS production kit: docker-compose.yml, api/web Dockerfiles, Caddyfile, .env.production.example, server-setup.sh, backup-to-s3.sh, restore.sh, build-setup-aws.bat, AWS-DEPLOY.md
-apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, RELEASE-CHECKLIST.md, README.md
+apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, git-push.bat, .gitignore/.gitattributes, RELEASE-CHECKLIST.md, README.md
 ```
 
 **Folder rule (D15):** this folder holds only licence-server/portal code. App-specific files live in the app:
@@ -114,6 +114,7 @@ apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, RELEASE-CHECKLI
 - Diagnostic Studio: run `start.bat` once (creates DIAGSTUDIO, writes `licensing.dat` into the DS repo), then `build-setup.bat DIAGSTUDIO`. DS's own `installer\build-installer.bat` now needs `installer\licensing.dat` present. Portal: create Diagnostic Studio plans/prices if the defaults don't fit.
 - KStack: run `start.bat` once (switches KSTACK to signed keys, writes `licensing.dat` into the KStack repo), then `build-setup.bat KSTACK`; KStack's own `Installer\build-installer.ps1` now needs `Installer\licensing.dat` present.
 - Portal: the "Vehicle SIM key" panel / approve form shows VehSim protocol features also for KStack (KStack ignores features) — rename/hide per product later.
+- **Git (GitHub, private)**: local repo ready on branch `main` (2 commits, 280 files; secrets excluded by `.gitignore`: `.env`, `deploy/.env`, `licensing.dat/json`, `*.pem`, `.venv`, `node_modules`, `dist`, logs). To do: create the empty private GitHub repo, then `git-push.bat <repo-url>` (Git for Windows signs in via browser). Later updates: `git-push.bat`. Server pulls with `deploy/update.sh`.
 - **Go live on AWS** (needs the user's AWS account + chosen domain): follow `deploy/AWS-DEPLOY.md` — EC2 + Elastic IP + DNS, `deploy/.env`, keygen, `prod_init`, `docker compose up -d`, `set_app_public_key --from-server`, `build-setup-aws.bat`, S3 backup cron, first-machine test (RELEASE-CHECKLIST.md). Docker images not built in the dev sandbox (no Docker there) — first `docker compose build` happens on the server.
 - VehSim `tests/Licensing/clock-tamper-check` reflects the old clock rules (superseded by `vehsim-clock-reactivation`, updated 03-Nov to D10).
 - Note for running the .NET checks back to back against one server: the public request limit is 30 per 15 min per IP — run them on a fresh start or wait.
@@ -156,3 +157,4 @@ apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, RELEASE-CHECKLI
 - 03-Nov-2026 — SVN check: VehSim committed at r1735; 4 VehSim files changed since (D20) + KStack pending; `svn-commit-apps.ps1` commit messages updated.
 - 03-Nov-2026 — Diagnostic Studio licensed like KStack/VehSim (D21): DiagnosticStudio.Licensing + app wiring (startup gate, licence/reactivation windows, badge), old HMAC licensing removed, installer ships licensing.dat, apps.json DIAGSTUDIO/DGST, `tests/DiagnosticStudio.LicensingCheck` (all pass), svn-commit-apps covers DIAGSTUDIO.
 - 03-Nov-2026 — Clock rules refined (D10): forward allowed inside the licence period; back to the correct date OK without reactivation; earlier than the real date blocked (lifts by itself when corrected, or Reactivate). Trusted-time anchor (server time / recorded mark + monotonic) instead of the local clock in `LicenseManager.AdvanceClock` of VehSim, KStack and Diagnostic Studio; block-window texts; clock alert hand-off fix (`MarkClockAlertSent(alert)`); KStack/DS check step 4 and `vehsim-clock-reactivation` updated — all .NET checks pass, all three apps build.
+- 03-Nov-2026 — Git: licence folder is a git repo (`main`), `.gitignore` (secrets/builds excluded), `.gitattributes` (LF for .sh), `git-push.bat`, `deploy/update.sh` (server: git pull + rebuild + restart). AWS step next.
