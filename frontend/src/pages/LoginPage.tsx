@@ -87,7 +87,7 @@ export function LoginPage() {
           <div className={BRAND}>
             <div className={LOGO}>K</div>
             <div>
-              <div className={BRAND_NAME}>K License Center</div>
+              <div className={BRAND_NAME}>Karnex License Center</div>
               <div className={BRAND_TAG}>Manage licenses. Simplify operations.</div>
             </div>
           </div>
@@ -134,7 +134,7 @@ export function LoginPage() {
           <div className={`${BRAND} mb-[30px]`}>
             <div className={LOGO}>K</div>
             <div>
-              <h2 id="lg-heading" className={BRAND_NAME}>K License Center</h2>
+              <h2 id="lg-heading" className={BRAND_NAME}>Karnex License Center</h2>
               <div className={BRAND_TAG}>Sign in to manage licenses</div>
             </div>
           </div>
@@ -197,7 +197,7 @@ export function LoginPage() {
           <div className="mt-[30px] pt-[22px] text-center text-[14.5px] text-[var(--lg-ink-2)] [border-top:1px_solid_var(--lg-field-border)] [&_a:hover]:underline [&_a]:font-semibold [&_a]:text-[#2563eb] [&_a]:no-underline dark:[&_a]:text-[#60a5fa]">
             Need a licence? <Link to="/request">Request one</Link>
           </div>
-          <div className="mt-3 text-center text-xs uppercase tracking-[0.12em] text-[var(--lg-ink-3)]">K License Center · Authorization Console</div>
+          <div className="mt-3 text-center text-xs uppercase tracking-[0.12em] text-[var(--lg-ink-3)]">Karnex License Center · Authorization Console</div>
         </section>
       </div>
     </div>

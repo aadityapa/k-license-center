@@ -1,4 +1,4 @@
-# K License Authorization System — Architecture
+# Karnex License Authorization System — Architecture
 
 Version 1.0 · 2026-08-26 · Status: Approved baseline
 

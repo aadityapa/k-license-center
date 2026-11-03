@@ -172,7 +172,7 @@ export function CompleteRequestPage() {
           <div>
             <h1 className="text-lg tracking-[-0.02em]">Complete your licence request</h1>
             <div className="mt-px text-sm text-ink-2">
-              {data ? data.productName : 'K License Center · self-service'}
+              {data ? data.productName : 'Karnex License Center · self-service'}
             </div>
           </div>
         </div>
@@ -448,7 +448,7 @@ export function CompleteRequestPage() {
           </>
         )}
 
-        <div className={FOOTER}>K License Center · Licence Requests</div>
+        <div className={FOOTER}>Karnex License Center · Licence Requests</div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-# K License API (FastAPI). Build context = the repository root (see docker-compose.yml).
+# Karnex License API (FastAPI). Build context = the repository root (see docker-compose.yml).
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \

@@ -1,4 +1,4 @@
-# K License Center portal (React build) served by Caddy, which also terminates HTTPS
+# Karnex License Center portal (React build) served by Caddy, which also terminates HTTPS
 # (automatic Let's Encrypt certificate for $DOMAIN) and forwards /api/* to the API.
 # Build context = the repository root.
 FROM node:20-alpine AS build

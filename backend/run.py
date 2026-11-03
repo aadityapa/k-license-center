@@ -1,5 +1,5 @@
 """
-Starts the K License API.
+Starts the Karnex License API.
 
     python run.py            serve on PORT from backend/.env (default 3001)
     python run.py --reload   development: restart when a .py file changes

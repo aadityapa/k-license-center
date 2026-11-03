@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Update the K License Center on the server to the latest code from Git.
+# Update the Karnex License Center on the server to the latest code from Git.
 #   cd ~/klicense/deploy && ./update.sh
 # Pulls the code, rebuilds the images and restarts. The database is migrated automatically
 # when the API starts; data, certificates and backups are kept (Docker volumes / deploy/backups).

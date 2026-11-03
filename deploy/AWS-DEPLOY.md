@@ -1,4 +1,4 @@
-# Deploying the K License Center on AWS
+# Deploying the Karnex License Center on AWS
 
 One EC2 server runs everything in Docker:
 

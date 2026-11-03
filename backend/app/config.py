@@ -171,7 +171,7 @@ def load_config() -> Config:
             port=_int("SMTP_PORT", 587),
             user=_env("SMTP_USER"),
             password=_env("SMTP_PASSWORD"),
-            sender=_env("MAIL_FROM", "K License Center <no-reply@karnex.in>") or "K License Center <no-reply@karnex.in>",
+            sender=_env("MAIL_FROM", "Karnex License Center <no-reply@karnex.in>") or "Karnex License Center <no-reply@karnex.in>",
         ),
         licence_signing_key=licence_key,
         vbs_signing_key=vbs_key,

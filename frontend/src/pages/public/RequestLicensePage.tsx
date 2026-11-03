@@ -64,7 +64,7 @@ export function RequestLicensePage() {
           <div className={LOGO}>K</div>
           <div>
             <h1 className="text-lg tracking-[-0.02em]">Request a licence</h1>
-            <div className="mt-px text-sm text-ink-2">K License Center · self-service</div>
+            <div className="mt-px text-sm text-ink-2">Karnex License Center · self-service</div>
           </div>
         </div>
 
@@ -76,7 +76,7 @@ export function RequestLicensePage() {
             </div>
             <p className={INTRO}>
               Licences are not being issued through this page at the moment. If you already have a
-              contact at K License Center, please reach out to them directly.
+              contact at Karnex License Center, please reach out to them directly.
             </p>
           </>
         ) : done ? (
@@ -179,7 +179,7 @@ export function RequestLicensePage() {
         <div className="mt-5 pt-4 text-center text-sm text-muted [border-top:1px_solid_var(--border)]">
           Already a team member? <Link to="/login">Sign in to the console</Link>
         </div>
-        <div className={FOOTER}>K License Center · Licence Requests</div>
+        <div className={FOOTER}>Karnex License Center · Licence Requests</div>
       </div>
     </div>
   );

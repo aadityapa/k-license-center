@@ -1,5 +1,5 @@
 """
-K License Authorization System — REST API (FastAPI + PostgreSQL).
+Karnex License Authorization System — REST API (FastAPI + PostgreSQL).
 
 Run:  python run.py           (or: uvicorn app.main:app --port 3001)
 """
@@ -40,7 +40,7 @@ async def lifespan(_app: FastAPI):
     if config.env == "production":
         await run_in_threadpool(_check_production_database)
     start_expiry_job()
-    logger.info("K License API listening", port=config.port, env=config.env)
+    logger.info("Karnex License API listening", port=config.port, env=config.env)
     try:
         yield
     finally:
@@ -89,7 +89,7 @@ class ErrorMiddleware:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="K License API",
+        title="Karnex License API",
         lifespan=lifespan,
         docs_url=None, redoc_url=None, openapi_url=None,
         redirect_slashes=False,

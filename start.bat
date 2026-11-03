@@ -1,6 +1,6 @@
 @echo off
 rem ============================================================
-rem  K License Center - start everything
+rem  Karnex License Center - start everything
 rem
 rem    start.bat
 rem
@@ -89,8 +89,8 @@ popd
 
 echo.
 echo Starting the licence server and the portal...
-start "K License server" cmd /k "cd /d "%~dp0backend" && "%VPY%" run.py --reload"
-start "K License portal" cmd /k "cd /d "%~dp0frontend" && npm run dev"
+start "Karnex License server" cmd /k "cd /d "%~dp0backend" && "%VPY%" run.py --reload"
+start "Karnex License portal" cmd /k "cd /d "%~dp0frontend" && npm run dev"
 timeout /t 8 /nobreak >nul
 start "" http://localhost:5173
 
@@ -101,5 +101,5 @@ echo Licence server: http://localhost:3001  (health: /health and /health/db)
 echo Close the two server windows to stop.
 echo.
 echo First time only, so other PCs can reach the server, run in an Administrator command prompt:
-echo   netsh advfirewall firewall add rule name="K License API" dir=in action=allow protocol=TCP localport=3001
+echo   netsh advfirewall firewall add rule name="Karnex License API" dir=in action=allow protocol=TCP localport=3001
 endlocal

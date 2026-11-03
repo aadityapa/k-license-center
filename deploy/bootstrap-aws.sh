@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-shot setup of the K License Center on a fresh Ubuntu EC2 with the database on Amazon RDS.
+# One-shot setup of the Karnex License Center on a fresh Ubuntu EC2 with the database on Amazon RDS.
 #
 #   curl -fsSL https://raw.githubusercontent.com/aadityapa/k-license-center/main/deploy/bootstrap-aws.sh \
 #     | sudo bash -s -- <DOMAIN> <RDS_ENDPOINT> <RDS_SECRET_ARN> [ACME_EMAIL]
@@ -75,7 +75,9 @@ chmod 600 .env
 echo "== 5/6 build images, signing keys"
 $COMPOSE build
 if ! grep -q '^VBS_SIGNING_KEY=.\+' .env; then
-  $COMPOSE run --rm --no-deps -e NODE_ENV=development api python -m scripts.keygen \
+  # -T and </dev/null: when this script is piped into bash (curl | bash), a container must not
+  # read stdin — it would swallow the rest of the script.
+  $COMPOSE run --rm -T --no-deps -e NODE_ENV=development api python -m scripts.keygen </dev/null \
     | grep -E '^(LICENCE|VBS)_SIGNING_KEY=' >> .env
   echo "   new signing keys written to deploy/.env (back this file up!)"
 fi
@@ -84,11 +86,11 @@ echo "== 6/6 database tables + admin account, start"
 CRED=/root/klicense-admin.txt
 if [ ! -f "$CRED" ]; then
   ADMINPW="Kl$(python3 -c 'import secrets;print(secrets.token_urlsafe(12))')#7"
-  if $COMPOSE run --rm -e INIT_ADMIN_PASSWORD="$ADMINPW" api python -m scripts.prod_init </dev/null; then
+  if $COMPOSE run --rm -T -e INIT_ADMIN_PASSWORD="$ADMINPW" api python -m scripts.prod_init </dev/null; then
     umask 077; printf 'Portal: https://%s\nUser:   admin\nPassword: %s\n' "$DOMAIN" "$ADMINPW" > "$CRED"
   fi
 else
-  $COMPOSE run --rm api python -m scripts.prod_init </dev/null || true
+  $COMPOSE run --rm -T api python -m scripts.prod_init </dev/null || true
 fi
 $COMPOSE up -d
 # RDS rotates the DB password in Secrets Manager: pick up a new one every hour
@@ -97,6 +99,6 @@ chmod +x /etc/cron.hourly/klicense-db-secret "$DIR/deploy/refresh-db-secret.sh"
 sleep 20
 curl -fsS "https://$DOMAIN/health/db" && echo || echo "(HTTPS certificate may need another minute: curl https://$DOMAIN/health/db)"
 echo
-echo "================ K License Center is running ================"
+echo "================ Karnex License Center is running ================"
 cat "$CRED" 2>/dev/null || true
 echo "Change the admin password after the first sign-in. Credentials file: $CRED (root only)."

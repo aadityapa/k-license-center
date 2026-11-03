@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time preparation of a fresh Ubuntu 22.04 / 24.04 EC2 server for the K License Center.
+# One-time preparation of a fresh Ubuntu 22.04 / 24.04 EC2 server for the Karnex License Center.
 #   sudo bash server-setup.sh
 # Installs Docker + compose plugin, turns on automatic security updates, a 2 GB swap file
 # (small instances), the firewall (22/80/443) and checks the clock sync (the server's clock

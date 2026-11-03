@@ -1,4 +1,4 @@
-# K License Authorization System
+# Karnex License Authorization System
 
 Central license authorization and management platform for Karnex products (KStack, KFlash — extensible to future products by data, not code). React admin UI → Python (FastAPI) REST API → PostgreSQL (14+) with all license lifecycle logic in PL/pgSQL functions.
 

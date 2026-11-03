@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Creates the whole K License Center production setup in AWS — run it in AWS CloudShell
+# Creates the whole Karnex License Center production setup in AWS — run it in AWS CloudShell
 # (console top bar, >_ icon), region ap-south-1:
 #
 #   curl -fsSL https://raw.githubusercontent.com/aadityapa/k-license-center/main/deploy/aws-create.sh | bash
@@ -30,8 +30,8 @@ sg() {  # name description -> id (create if missing)
   fi
   echo "$id"
 }
-SG_EC2=$(sg ${NAME}-ec2-sg "K License Center web server")
-SG_RDS=$(sg ${NAME}-rds-sg "K License Center database")
+SG_EC2=$(sg ${NAME}-ec2-sg "Karnex License Center web server")
+SG_RDS=$(sg ${NAME}-rds-sg "Karnex License Center database")
 for p in 22 80 443; do
   aws ec2 authorize-security-group-ingress --group-id "$SG_EC2" --protocol tcp --port $p --cidr 0.0.0.0/0 >/dev/null 2>&1 || true
 done
@@ -102,10 +102,10 @@ for i in $(seq 1 60); do
   sleep 10
 done
 
-say "installing the K License Center on the server (10-15 minutes)"
-CMD="curl -fsSL https://raw.githubusercontent.com/aadityapa/k-license-center/main/deploy/bootstrap-aws.sh | bash -s -- $DOMAIN $RDS_HOST '$SECRET_ARN' $ACME_EMAIL"
+say "installing the Karnex License Center on the server (10-15 minutes)"
+CMD="curl -fsSL -o /root/bootstrap-aws.sh https://raw.githubusercontent.com/aadityapa/k-license-center/main/deploy/bootstrap-aws.sh && bash /root/bootstrap-aws.sh $DOMAIN $RDS_HOST '$SECRET_ARN' $ACME_EMAIL"
 CID=$(aws ssm send-command --instance-ids "$IID" --document-name AWS-RunShellScript --timeout-seconds 3600 \
-  --parameters "{\"commands\":[\"$CMD\"],\"executionTimeout\":[\"3600\"]}" --comment "K License Center bootstrap" \
+  --parameters "{\"commands\":[\"$CMD\"],\"executionTimeout\":[\"3600\"]}" --comment "Karnex License Center bootstrap" \
   --query Command.CommandId --output text)
 while true; do
   ST=$(aws ssm get-command-invocation --command-id "$CID" --instance-id "$IID" --query Status --output text 2>/dev/null || echo Pending)

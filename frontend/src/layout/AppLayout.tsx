@@ -169,7 +169,7 @@ export function AppLayout() {
             K
           </div>
           <div>
-            <div className="text-md font-semibold leading-[1.25] tracking-[-0.01em] text-sidebar-strong">K License Center</div>
+            <div className="text-md font-semibold leading-[1.25] tracking-[-0.01em] text-sidebar-strong">Karnex License Center</div>
             <div className="mt-[3px] inline-flex items-center gap-[5px] rounded-full border border-solid border-primary-border bg-primary-soft px-2 py-px text-[9px] font-bold uppercase tracking-[0.14em] text-primary">
               {role.badge}
             </div>

@@ -1,5 +1,5 @@
 /**
- * Tailwind for the K License Center portal.
+ * Tailwind for the Karnex License Center portal.
  *
  * The design system lives in CSS variables (src/styles/tokens.css): two themes
  * (dark default, light via <html data-theme="light">) and per-role accents

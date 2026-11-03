@@ -18,10 +18,10 @@ $repos = @(
        Message = "Licensing: licence kept after restart - stable Machine ID (burned-in MAC + CPU ID, CPUID fallback), key accepted for any identity of this PC, atomic licence-state save with backup, licensing.log; vehsim-harness clock step follows current rules." },
     @{ Name = "KSTACK"; Path = "C:\Users\Admin\Desktop\SVN2\07-SW Trunk\Working Repo\KSTACK"
        Include = @("src\", "tests\", "docs\", "Installer\*.iss", "Installer\*.ps1", "KStackConfigurator.sln", "README.md", ".gitignore")
-       Message = "Licensing: KSTACK Configurator licensed via K License Center (like Vehicle SIM) - KStack.Licensing, licence window (theme colours), request/approve/auto-activate, manual key, Sync now, clock rules + reactivation, Validate/Generate Code need a licence; licence kept after restart (stable Machine ID, atomic state save); installer ships licensing.dat; tests/KStack.LicensingCheck." },
+       Message = "Licensing: KSTACK Configurator licensed via Karnex License Center (like Vehicle SIM) - KStack.Licensing, licence window (theme colours), request/approve/auto-activate, manual key, Sync now, clock rules + reactivation, Validate/Generate Code need a licence; licence kept after restart (stable Machine ID, atomic state save); installer ships licensing.dat; tests/KStack.LicensingCheck." },
     @{ Name = "DIAGSTUDIO"; Path = "C:\Users\Admin\Desktop\SVN3\07-SW Trunk\Working\DiagnosticStudio"
        Include = @("src\", "tests\", "installer\*.iss", "installer\*.bat", "DiagnosticStudio.sln", "README.md", ".gitignore")
-       Message = "Licensing: Diagnostic Studio licensed via K License Center (like Vehicle SIM / KSTACK) - DiagnosticStudio.Licensing (signed key bound to MAC + CPU ID), licence window, request/approve/auto-activate, manual key, Sync now, trial, clock rules + reactivation, licence required to start; old HMAC licensing removed; installer ships licensing.dat; tests/DiagnosticStudio.LicensingCheck." }
+       Message = "Licensing: Diagnostic Studio licensed via Karnex License Center (like Vehicle SIM / KSTACK) - DiagnosticStudio.Licensing (signed key bound to MAC + CPU ID), licence window, request/approve/auto-activate, manual key, Sync now, trial, clock rules + reactivation, licence required to start; old HMAC licensing removed; installer ships licensing.dat; tests/DiagnosticStudio.LicensingCheck." }
 )
 $exclude = '(^|\\)(bin|obj|\.vs|publish|Output|dist|license-center-builds|x64-license-center|node_modules|TestResults|Claude outputs|_to_delete)(\\|$)|licensing\.(dat|json)$|\.user$'
 

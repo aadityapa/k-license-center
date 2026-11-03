@@ -1,4 +1,4 @@
-# Release checklist — Vehicle SIM under K License Authorization
+# Release checklist — Vehicle SIM under Karnex License Authorization
 
 What was verified, what you must do before shipping, and what to test on the
 first real machine. Read the whole thing once; the "must do" list is short but
