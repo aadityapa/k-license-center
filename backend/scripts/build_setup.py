@@ -199,15 +199,24 @@ def build_one(app: dict[str, Any], iscc: str, url: str) -> str:
     if not os.path.exists(iss):
         raise RuntimeError(f"installer script not found: {iss}")
 
-    say("  [1/3] connecting to the licence server ...")
-    db = db_client()
-    try:
-        r = configure_app(db, app, url, {"log": say})
-        if not r["ok"]:
-            raise RuntimeError(r["message"])
-        say(f"        {r['message']}")
-    finally:
-        db.close()
+    if os.environ.get("KLC_SKIP_CONFIGURE") == "1":
+        # deploy\build-setup-live.bat: the database is not reachable from this PC; the
+        # licensing.dat was issued on the server (scripts.issue_app_config) and saved already.
+        say("  [1/3] using the licensing.dat issued by the server (no database access needed)")
+        cfg = app.get("configFile") if app.get("configFile") is not None else "licensing.dat"
+        tg = (app.get("configTargets") or [f"installer\\{cfg}"])[0]
+        if not os.path.exists(join(repo, *re.split(r"[\\/]", tg))):
+            raise RuntimeError(f"{tg} is missing in {repo} - issue it on the server first (scripts.issue_app_config)")
+    else:
+        say("  [1/3] connecting to the licence server ...")
+        db = db_client()
+        try:
+            r = configure_app(db, app, url, {"log": say})
+            if not r["ok"]:
+                raise RuntimeError(r["message"])
+            say(f"        {r['message']}")
+        finally:
+            db.close()
 
     # The app must trust the key this server signs with, or every key it receives is
     # refused ("Signature check failed"). Checked against the running server.
