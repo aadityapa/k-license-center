@@ -1,0 +1,82 @@
+{
+  "//": "Applications licensed by this server. Add one block per app (copy the Vehicle SIM one).",
+  "//1": "start.bat connects every app listed here; build-setup.bat builds the Setup.exe of one or all.",
+  "//2": "serverUrl: the address the installed apps use to reach this server. Leave empty to use",
+  "//3": "this PC's network address (fine inside the office). For customers outside, put the",
+  "//4": "permanent https address, e.g. https://license.karnex.in/api/v1",
+  "serverUrl": "",
+
+  "apps": [
+    {
+      "name": "Vehicle SIM",
+      "productCode": "VEHICLESIM",
+      "productName": "Vehicle SIM",
+      "keyPrefix": "VSIM",
+      "keyFormat": "VBS_KEY",
+
+      "repo": "C:\\Users\\Admin\\Desktop\\SVN\\07-SW Trunk\\Working Repo\\VehSim-NextGen",
+      "project": "src\\Karnex.Vbs.App\\Karnex.Vbs.App.csproj",
+      "installerScript": "installer\\KarnexVbs.iss",
+      "setupOutput": "installer\\dist",
+      "publishDir": "publish\\x64",
+      "exeName": "KarnexVbs.exe",
+
+      "configFile": "licensing.dat",
+      "configTargets": ["installer\\licensing.dat", "src\\Karnex.Vbs.App\\licensing.dat"],
+      "installedDir": "Karnex VBS",
+      "allowLegacyV2Keys": true
+    },
+    {
+      "name": "KSTACK Configurator",
+      "productCode": "KSTACK",
+      "productName": "KStack",
+      "keyPrefix": "KSTK",
+      "keyFormat": "VBS_KEY",
+
+      "repo": "C:\\Users\\Admin\\Desktop\\SVN2\\07-SW Trunk\\Working Repo\\KSTACK",
+      "project": "src\\KStack.App\\KStack.App.csproj",
+      "installerScript": "Installer\\KStackConfigurator.iss",
+      "setupOutput": "Installer\\Output",
+      "publishDir": "Installer\\publish",
+      "exeName": "KStackConfigurator.exe",
+
+      "configFile": "licensing.dat",
+      "configTargets": ["Installer\\licensing.dat", "src\\KStack.App\\licensing.dat"],
+      "installedDir": "KSTACK Configurator"
+    },
+    {
+      "name": "Diagnostic Studio",
+      "productCode": "DIAGSTUDIO",
+      "productName": "Diagnostic Studio",
+      "keyPrefix": "DGST",
+      "keyFormat": "VBS_KEY",
+
+      "repo": "C:\\Users\\Admin\\Desktop\\SVN3\\07-SW Trunk\\Working\\DiagnosticStudio",
+      "project": "src\\DiagnosticStudio\\DiagnosticStudio.csproj",
+      "installerScript": "installer\\DiagnosticStudio.iss",
+      "setupOutput": "installer\\Output",
+      "publishDir": "installer\\publish",
+      "exeName": "DiagnosticStudio.exe",
+
+      "configFile": "licensing.dat",
+      "configTargets": ["installer\\licensing.dat", "src\\DiagnosticStudio\\licensing.dat"],
+      "installedDir": "Karnex\\Diagnostic Studio"
+    }
+  ],
+
+  "//help": {
+    "name": "Shown in menus",
+    "productCode": "Product code in the portal (Products). Created automatically if missing, with Trial/Monthly/Yearly/Lifetime plans",
+    "productName / keyPrefix": "Used only when the product has to be created. keyPrefix: 2-6 capital letters, unique",
+    "keyFormat": "KSTK_KEY (typed key), LIC_FILE (.lic hardware file) or VBS_KEY (signed key string, like Vehicle SIM)",
+    "repo": "Folder of the app's source code",
+    "project": ".csproj to publish (relative to repo)",
+    "installerScript": "Inno Setup .iss (relative to repo). It must package publishDir and the config file",
+    "setupOutput": "Where the Setup.exe is written, relative to repo (default: the .iss folder + \\Output). Setup.exe files stay with the app, never in this folder",
+    "publishDir": "Where the build goes (relative to repo); the .iss must take its files from here",
+    "exeName": "The app's .exe, used to find existing builds to update",
+    "configFile": "Settings file the app reads next to its .exe. A name ending in .dat is written encrypted (AES-256-GCM); .json is plain text",
+    "configTargets": "Extra places (relative to repo) to write the settings file, e.g. where the .iss picks it up",
+    "installedDir": "Optional: folder under Program Files where the app is installed on this PC, updated too"
+  }
+}

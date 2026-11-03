@@ -1,0 +1,47 @@
+{
+	# Let's Encrypt account e-mail (expiry notices).
+	email {$ACME_EMAIL}
+}
+
+# DOMAIN = the public name, e.g. license.karnex.in (DNS A record -> the server's Elastic IP).
+# Caddy gets and renews the HTTPS certificate by itself; http:// redirects to https://.
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	# Portal sign-in and admin API only from these networks (ADMIN_ALLOW_CIDRS in .env,
+	# e.g. the office IP "203.0.113.10/32"). The apps' endpoints (/api/v1/license,
+	# /api/v1/public) stay open to customers. Default: everyone (login still required).
+	@adminBlocked {
+		path /api/v1/admin/* /api/v1/auth/*
+		not remote_ip {$ADMIN_ALLOW_CIDRS:0.0.0.0/0 ::/0}
+	}
+
+	# API (note: /api-clients and /api-logs are portal pages, not API calls).
+	handle /api/* {
+		respond @adminBlocked "Not allowed from this network" 403
+		reverse_proxy {$API_UPSTREAM:api:3001} {
+			# live channel (server-sent events) must not be buffered
+			flush_interval -1
+		}
+	}
+	handle /health* {
+		reverse_proxy {$API_UPSTREAM:api:3001}
+	}
+
+	# Portal (single-page app).
+	handle {
+		root * {$WEB_ROOT:/srv}
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+}

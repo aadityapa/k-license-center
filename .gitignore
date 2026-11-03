@@ -1,0 +1,39 @@
+# ---- Secrets: never commit ----
+.env
+*.env
+!.env.example
+!**/.env.example
+!deploy/.env.production.example
+deploy/.env
+deploy/build-aws.cfg
+deploy/backups/
+licensing.dat
+licensing.json
+*.pem
+*.pfx
+*.key
+
+# ---- Python ----
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ---- Node / portal build ----
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# ---- .NET (examples / verification harnesses) ----
+bin/
+obj/
+.vs/
+*.user
+
+# ---- Logs, local leftovers ----
+*.log
+backend/Karnex/
+verification/portal-e2e/screenshots/
+Thumbs.db
+.DS_Store

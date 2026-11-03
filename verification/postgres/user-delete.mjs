@@ -1,0 +1,26 @@
+const B=(process.env.API_URL||'http://127.0.0.1:3001')+'/api/v1'; let f=0; const ok=(c,m,x)=>{console.log(c?'  ok  ':'  FAIL',m,c?'':JSON.stringify(x).slice(0,250)); if(!c)f++;};
+async function call(m,p,b,t){const r=await fetch(B+p,{method:m,headers:{'content-type':'application/json',...(t?{authorization:'Bearer '+t}:{})},body:b?JSON.stringify(b):undefined});return {s:r.status,j:await r.json()};}
+const login=async(u,pw='Pass@100%')=>(await call('POST','/auth/login',{username:u,password:pw}));
+const A=(await login('admin')).j.data.token;
+const list=async()=>(await call('GET','/admin/users?pageSize=100',null,A)).j.data.items;
+let us=await list(); const adm=us.find(u=>u.username==='admin'), maker=us.find(u=>u.username==='maker');
+const R=(await call('GET','/admin/roles',null,A)).j.data; const roles=Array.isArray(R)?R:R.items; const adminRole=roles.find(r=>r.roleCode==='ADMIN');
+let r=await call('DELETE','/admin/users/'+adm.userId,null,A); ok(r.s===409,'cannot delete own/admin account',r.j);
+const M=(await login('maker')).j.data.token;
+r=await call('POST','/admin/customers',{customerCode:'DEL-1',companyName:'Pending Co'},M); ok(r.s===202,'maker has a pending request',r.j); const crid=r.j.data.changeRequestId;
+r=await call('DELETE','/admin/users/'+maker.userId,null,A); ok(r.s===200,'delete maker',r.j);
+r=await call('GET','/admin/customers',null,M); ok(r.s===401,'maker signed out immediately',r.j);
+r=await login('maker'); ok(r.s===401,'maker cannot sign in',r.j);
+us=await list(); ok(!us.some(u=>u.userId===maker.userId),'maker gone from list',us.map(u=>u.username));
+r=await call('GET','/admin/change-requests/'+crid,null,A); ok(r.j.data?.status==='CANCELLED','pending request cancelled',r.j.data);
+r=await call('GET','/admin/audit-logs?action=USER_DELETED',null,A); ok(r.j.data?.total>=1,'USER_DELETED audited',r.j.data);
+r=await call('DELETE','/admin/users/'+maker.userId,null,A); ok(r.s===404,'second delete -> 404',r.j);
+r=await call('PUT','/admin/users/'+maker.userId,{fullName:'x'},A); ok(r.s===404,'edit deleted -> 404',r.j);
+r=await call('POST','/admin/users',{username:'maker',email:'maker@karnex.in',fullName:'New Maker',password:'NewMaker@123',roleIds:[]},A); ok(r.s===201,'username+email reusable',r.j);
+r=await call('POST','/admin/users',{username:'admin2',email:'a2@k.in',fullName:'Second Admin',password:'Second@1234',roleIds:[adminRole.roleId]},A); const a2=r.j.data.userId;
+const A2=(await login('admin2','Second@1234')).j.data.token;
+r=await call('DELETE','/admin/users/'+adm.userId,null,A2); ok(r.s===409&&r.j.error.code==='PROTECTED_ACCOUNT','other admin cannot delete admin',r.j);
+r=await call('DELETE','/admin/users/'+a2,null,A2); ok(r.s===409,'cannot delete yourself',r.j);
+r=await call('PUT','/admin/users/'+a2,{status:'LOCKED'},A); ok(r.s===200,'lock admin2',r.j);
+r=await call('GET','/admin/users',null,A2); ok(r.s===401,'locked user signed out immediately',r.j);
+console.log('FAILS',f);

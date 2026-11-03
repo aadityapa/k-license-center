@@ -1,0 +1,80 @@
+/* ==========================================================================
+   Dashboard pieces shared with other pages. Everything that only the role
+   dashboards use now lives as utilities in src/pages/dashboard/*.
+   ========================================================================== */
+
+/* ---------- Metric cards (Activations, Renewals, Product detail) ---------- */
+.metric-grid { @apply mb-5 grid grid-cols-[repeat(auto-fill,minmax(184px,1fr))] gap-3; }
+
+.metric-card {
+  @apply relative flex items-start justify-between gap-3 overflow-hidden rounded-lg border border-solid border-line
+         bg-glass-solid p-4 shadow-[shadow:var(--shadow-xs),inset_0_1px_0_var(--glass-edge-top)]
+         transition-[transform,box-shadow,border-color] duration-ui ease-ui;
+}
+
+/* accent rail that lights up on hover */
+.metric-card::after {
+  @apply absolute inset-x-0 bottom-0 h-0.5 opacity-35 transition-opacity duration-ui ease-ui content-[''];
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+.metric-card:hover {
+  @apply -translate-y-[2px] border-primary-border
+         shadow-[shadow:var(--shadow-md),var(--glow-primary),inset_0_1px_0_var(--glass-edge-top)];
+}
+.metric-card:hover::after { @apply opacity-100; }
+
+.metric-card .metric-label { @apply text-2xs font-bold uppercase tracking-[0.1em] text-muted; }
+.metric-card .metric-value { @apply mt-1 text-2xl font-bold leading-[1.1] tracking-[-0.03em]; }
+.metric-card .metric-hint { @apply mt-0.5 text-sm text-muted; }
+
+.metric-icon {
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-solid border-line
+         bg-surface-active text-ink-2;
+}
+
+.metric-card.accent-blue   .metric-icon { @apply border-primary-border bg-primary-soft text-primary; }
+.metric-card.accent-green  .metric-icon { @apply border-success-border bg-success-soft text-success; }
+.metric-card.accent-amber  .metric-icon { @apply border-warning-border bg-warning-soft text-warning; }
+.metric-card.accent-purple .metric-icon { @apply border-[rgba(192,132,252,0.35)] bg-purple-soft text-purple; }
+
+.metric-card.accent-green  .metric-value { @apply text-success [text-shadow:0_0_24px_rgba(52,211,153,0.35)]; }
+.metric-card.accent-amber  .metric-value { @apply text-warning [text-shadow:0_0_24px_rgba(251,191,36,0.30)]; }
+.metric-card.accent-blue   .metric-value { @apply text-primary [text-shadow:0_0_24px_var(--primary-glow)]; }
+.metric-card.accent-purple .metric-value { @apply text-purple; }
+.metric-card.accent-green::after  { background: linear-gradient(90deg, transparent, var(--success), transparent); }
+.metric-card.accent-amber::after  { background: linear-gradient(90deg, transparent, var(--warning), transparent); }
+.metric-card.accent-purple::after { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
+
+.metric-main { @apply flex w-full flex-col gap-2; }
+.metric-top { @apply flex items-start justify-between gap-3; }
+
+/* per-accent card tint — a wash from the accent into the glass (after :hover on
+   purpose: the tinted border stays when the card is hovered) */
+.metric-card.accent-blue   { @apply border-[rgba(34,211,238,0.22)];  background: linear-gradient(150deg, rgba(34, 211, 238, 0.10), var(--glass-solid) 62%); }
+.metric-card.accent-green  { @apply border-[rgba(52,211,153,0.22)];  background: linear-gradient(150deg, rgba(52, 211, 153, 0.10), var(--glass-solid) 62%); }
+.metric-card.accent-amber  { @apply border-[rgba(251,191,36,0.22)];  background: linear-gradient(150deg, rgba(251, 191, 36, 0.10), var(--glass-solid) 62%); }
+.metric-card.accent-purple { @apply border-[rgba(192,132,252,0.22)]; background: linear-gradient(150deg, rgba(192, 132, 252, 0.10), var(--glass-solid) 62%); }
+
+/* ---------- Page overview header (dashboards and most list pages) ---------- */
+.overview-head { @apply mb-5 flex flex-wrap items-start justify-between gap-4; }
+.overview-head h1 { @apply text-xl font-bold uppercase tracking-[0.01em]; }
+.overview-head .subtitle { @apply mt-[3px] text-ink-2; }
+
+/* ---------- Licence lifecycle chevron (viewer dashboard) ----------
+   Kept as a class: the chevron clip-paths, the per-stage colour (--stage, set
+   inline) mixed into the wash and the old-browser fallback don't read well as
+   utilities. Notched on the left, pointed on the right, so the row reads as a
+   flow rather than a set of unrelated tiles. */
+.pipeline-stage {
+  @apply flex min-w-[128px] flex-1 flex-col justify-center border border-solid py-3 pl-5 pr-3 text-[color:var(--stage)];
+  background: linear-gradient(150deg, color-mix(in srgb, var(--stage) 14%, transparent), var(--glass-solid) 72%);
+  border-color: color-mix(in srgb, var(--stage) 34%, transparent);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+}
+.pipeline-stage:last-child { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%); }
+
+/* Browsers without color-mix still get a readable, tinted chevron. */
+@supports not (background: color-mix(in srgb, red 10%, transparent)) {
+  .pipeline-stage { @apply border-line-strong; background: var(--glass-solid); }
+}

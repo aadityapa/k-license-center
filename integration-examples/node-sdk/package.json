@@ -1,0 +1,17 @@
+{
+  "name": "@karnex/license-client-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependency-free license client example for KStack/KFlash (Node 18+).",
+  "type": "commonjs",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.0"
+  }
+}

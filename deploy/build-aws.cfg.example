@@ -1,0 +1,9 @@
+# Settings for deploy\build-setup-aws.bat (copy to build-aws.cfg). Keep this file private.
+# Public name of the licence server (same as DOMAIN in the server's deploy/.env)
+DOMAIN=license.example.com
+# SSH login of the EC2 server
+SSH_HOST=license.example.com
+SSH_USER=ubuntu
+SSH_KEY=C:\Users\Admin\.ssh\klicense-aws.pem
+# Database password (DB_PASSWORD in the server's deploy/.env)
+DB_PASSWORD=

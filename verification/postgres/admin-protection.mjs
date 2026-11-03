@@ -1,0 +1,22 @@
+const B=(process.env.API_URL||'http://127.0.0.1:3001')+'/api/v1'; let f=0; const ok=(c,m,x)=>{console.log(c?'  ok  ':'  FAIL',m,c?'':JSON.stringify(x).slice(0,250)); if(!c)f++;};
+async function call(m,p,b,t){const r=await fetch(B+p,{method:m,headers:{'content-type':'application/json',...(t?{authorization:'Bearer '+t}:{})},body:b?JSON.stringify(b):undefined});return {s:r.status,j:await r.json()};}
+const login=async(u,pw='Pass@100%')=>(await call('POST','/auth/login',{username:u,password:pw}));
+const A=(await login('admin')).j.data.token;
+const users=(await call('GET','/admin/users?pageSize=100',null,A)).j.data.items; const adm=users.find(u=>u.username==='admin');
+const roles=(await call('GET','/admin/roles',null,A)).j.data; const R=(Array.isArray(roles)?roles:roles.items); const adminRole=R.find(r=>r.roleCode==='ADMIN'), viewerRole=R.find(r=>r.roleCode==='VIEWER');
+let r=await call('PUT','/admin/users/'+adm.userId,{status:'LOCKED'},A); ok(r.s===409&&r.j.error.code==='PROTECTED_ACCOUNT','cannot lock admin',r.j);
+r=await call('PUT','/admin/users/'+adm.userId,{status:'INACTIVE'},A); ok(r.s===409,'cannot deactivate admin',r.j);
+r=await call('PUT',`/admin/users/${adm.userId}/roles`,{roleIds:[viewerRole.roleId]},A); ok(r.s===409,'cannot remove ADMIN role',r.j);
+r=await call('PUT',`/admin/users/${adm.userId}/roles`,{roleIds:[adminRole.roleId,viewerRole.roleId]},A); ok(r.s===200,'can add another role while keeping ADMIN',r.j);
+r=await call('PUT',`/admin/roles/${adminRole.roleId}/permissions`,{permissions:['DASHBOARD_VIEW']},A); ok(r.s===409,'ADMIN role perms locked',r.j);
+r=await call('PUT','/admin/users/'+adm.userId,{fullName:'Karan Singh',email:adm.email,status:'ACTIVE'},A); ok(r.s===200,'admin edits own name',r.j);
+r=await call('POST','/admin/users',{username:'admin2',email:'a2@k.in',fullName:'Second Admin',password:'Second@1234',roleIds:[adminRole.roleId]},A); ok(r.s===201,'create second admin',r.j);
+const A2=(await login('admin2','Second@1234')).j.data.token;
+r=await call('PUT','/admin/users/'+adm.userId,{password:'Hijack@1234'},A2); ok(r.s===403,'other admin cannot change admin password',r.j);
+r=await call('PUT','/admin/users/'+adm.userId,{fullName:'Karan Singh',email:adm.email,status:'ACTIVE'},A2); ok(r.s===200,'other admin saving unchanged admin details is fine',r.j);
+r=await call('PUT','/admin/users/'+adm.userId,{status:'LOCKED'},A2); ok(r.s===409,'other admin cannot lock admin',r.j);
+for(let i=0;i<8;i++) await login('admin','wrong-password');
+r=await login('admin'); ok(r.s===200,'admin not auto-locked after 8 wrong passwords',r.j);
+for(let i=0;i<6;i++) await login('viewer','wrong-password');
+r=await login('viewer'); ok(r.s!==200,'other users still auto-lock',r.j);
+console.log('FAILS',f);

@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Shared primitives, part 3 — table footer + pagination, alerts, detail
+   grids, key/secret/JSON blocks, tabs and the small text helpers.
+   (Modal, error state and spinner are utilities in their components.)
+   ========================================================================== */
+
+/* ---------- Table footer ---------- */
+.table-foot {
+  @apply flex flex-wrap items-center justify-between gap-3 border-0 border-t border-solid border-line
+         bg-glass-sunken px-4 py-3;
+}
+.table-foot .pagination { @apply flex-1 justify-center border-t-0 bg-transparent p-0; }
+
+.foot-count { @apply whitespace-nowrap text-sm text-ink-2; }
+.foot-count strong { @apply text-ink; }
+
+/* ---------- Pagination ---------- */
+.pagination {
+  @apply flex flex-wrap items-center justify-between gap-3 border-0 border-t border-solid border-line
+         bg-glass-sunken px-4 py-3 text-sm text-ink-2;
+}
+.pagination .pages { @apply flex items-center gap-1; }
+
+/* ---------- Alerts ---------- */
+.alert {
+  @apply mb-4 flex items-start gap-3 rounded border border-solid border-transparent px-4 py-3 text-base;
+}
+.alert svg { @apply mt-px shrink-0; }
+.alert-error   { @apply border-danger-border bg-danger-soft text-danger; }
+.alert-warning { @apply border-warning-border bg-warning-soft text-warning; }
+.alert-success { @apply border-success-border bg-success-soft text-success; }
+.alert-info    { @apply border-info-border bg-info-soft text-info; }
+
+/* ---------- Definition lists ---------- */
+.def-grid { @apply grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-x-5 gap-y-4; }
+.def-item .def-label { @apply mb-[3px] text-2xs font-bold uppercase tracking-[0.1em] text-muted; }
+.def-item .def-value { @apply text-md [word-break:break-word]; }
+
+/* ---------- License key / secrets ---------- */
+.key-display {
+  @apply flex flex-wrap items-center gap-3 rounded-md border border-solid border-[rgba(94,234,212,0.28)]
+         bg-code p-4 font-mono text-lg tracking-[0.12em] text-key
+         shadow-[inset_0_0_34px_rgba(94,234,212,0.09),0_0_20px_rgba(94,234,212,0.10)];
+  text-shadow: 0 0 14px rgba(94, 234, 212, 0.5);
+}
+.key-display .btn { @apply tracking-normal; text-shadow: none; }
+
+.secret-box {
+  @apply mx-0 my-3 rounded-md border border-solid border-warning-border bg-warning-soft px-4 py-3;
+}
+.secret-box .secret-row { @apply mx-0 my-1.5 flex items-center gap-2 break-all font-mono text-base; }
+
+/* ---------- JSON diff ---------- */
+.json-diff { @apply grid grid-cols-[1fr_1fr] gap-3; }
+@media (max-width: 800px) { .json-diff { @apply grid-cols-[1fr]; } }
+
+.json-block { @apply min-w-0; }
+.json-block .json-title { @apply mb-[5px] text-2xs font-bold uppercase tracking-[0.09em] text-muted; }
+.json-block pre {
+  @apply m-0 max-h-[280px] overflow-x-auto rounded border border-solid border-line bg-code p-3
+         font-mono text-sm leading-[1.6] text-code-text;
+}
+
+/* ---------- Tabs ---------- */
+.tabs { @apply mb-4 flex flex-wrap gap-1 border-0 border-b border-solid border-line; }
+
+.tab {
+  @apply -mb-px cursor-pointer border-0 border-b-2 border-solid border-transparent bg-transparent px-[15px] py-[9px]
+         font-sans text-base font-medium text-ink-2 transition-[color,border-color] duration-ui ease-ui;
+}
+.tab:hover { @apply text-ink; }
+.tab.active {
+  @apply border-b-primary font-semibold text-primary;
+  text-shadow: 0 0 16px var(--primary-glow);
+}
+
+/* ---------- Text helpers ---------- */
+.muted { @apply text-muted; }
+.text-secondary { @apply text-ink-2; }
+.nowrap { @apply whitespace-nowrap; }
+.flex-between { @apply flex flex-wrap items-center justify-between gap-3; }
+.stack-8 > * + * { @apply mt-2; }

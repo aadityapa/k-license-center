@@ -1,0 +1,24 @@
+/* ==========================================================================
+   K License Center — stylesheet entry (Tailwind CSS)
+
+   Order is the cascade:
+     1. Tailwind base (preflight off — see tailwind.config.js) + design tokens (CSS variables, themes, roles)
+     2. Tailwind components + shared component classes (written with @apply)
+     3. page-specific leftovers that utilities cannot express (pseudo-elements, keyframes)
+     4. Tailwind utilities — last, so a utility on an element always wins
+   ========================================================================== */
+@import 'tailwindcss/base';
+@import './parts/tokens.css';
+@import './parts/base.css';
+
+@import 'tailwindcss/components';
+@import './parts/cards.css';
+@import './parts/dashboard.css';
+@import './parts/controls.css';
+@import './parts/records.css';
+@import './parts/components.css';
+@import './parts/chips.css';
+@import './parts/login.css';
+@import './parts/widgets.css';
+
+@import 'tailwindcss/utilities';

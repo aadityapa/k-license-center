@@ -1,0 +1,22 @@
+/* ---------------------------------------------------------------------------
+   Toggle chips — multi-select pills used where a set of entitlements is picked
+   (Vehicle SIM licensed protocols, key signature version). Buttons rather than
+   checkboxes so the whole pill is the hit target; aria-pressed carries the
+   state for assistive tech, since colour alone would not. Uses --primary, so
+   each role's accent flows through without an override.
+   (The notification bell is styled with utilities in components/NotificationBell.tsx.)
+   --------------------------------------------------------------------------- */
+.toggle-row { @apply flex flex-wrap gap-2; }
+
+.toggle-chip {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-solid border-line-input
+         bg-surface-sunken px-[13px] py-1.5 text-sm font-semibold text-ink-2
+         transition-[background,border-color,color] duration-[140ms] ease-[ease];
+}
+.toggle-chip:hover:not(:disabled) { @apply border-primary-border text-ink; }
+.toggle-chip:disabled { @apply cursor-not-allowed opacity-55; }
+.toggle-chip.is-on { @apply border-primary-border bg-primary-soft text-primary; }
+.toggle-chip.is-warn { @apply border-warning-border bg-warning-soft text-warning; }
+
+/* Row actions: wrap onto a second line rather than run off the card edge. */
+.row-actions { @apply flex flex-wrap justify-end gap-1.5; }

@@ -1,0 +1,101 @@
+# K License Center — production stack for one AWS EC2 server.
+#   cd deploy && cp .env.production.example .env   (fill it in)
+#   docker compose build && docker compose up -d db
+#   docker compose run --rm api python -m scripts.prod_init
+#   docker compose up -d
+# See AWS-DEPLOY.md.
+name: klicense
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: klicense
+      POSTGRES_USER: klicense
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in deploy/.env}
+      TZ: ${TZ:-Asia/Kolkata}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    # Only on the server itself (for SSH tunnels from the build PC) — never public.
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U klicense -d klicense"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/api.Dockerfile
+    image: klicense-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: klicense
+      DB_USER: klicense
+      CORS_ORIGINS: https://${DOMAIN}
+      TZ: ${TZ:-Asia/Kolkata}
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "3001"
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/web.Dockerfile
+    image: klicense-web
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in deploy/.env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      ADMIN_ALLOW_CIDRS: ${ADMIN_ALLOW_CIDRS:-0.0.0.0/0 ::/0}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on:
+      - api
+
+  # Daily database dump into deploy/backups (kept BACKUP_KEEP_DAYS days).
+  # Copy them off the server too: see AWS-DEPLOY.md (S3 sync / EBS snapshots).
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGHOST: db
+      PGUSER: klicense
+      PGPASSWORD: ${DB_PASSWORD}
+      PGDATABASE: klicense
+      KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      TZ: ${TZ:-Asia/Kolkata}
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          f=/backups/klicense-$$(date +%Y%m%d-%H%M).dump
+          if pg_dump -Fc -f "$$f.part"; then mv "$$f.part" "$$f"; echo "backup $$f"; else rm -f "$$f.part"; echo "backup FAILED"; fi
+          find /backups -name 'klicense-*.dump' -mtime +$$KEEP_DAYS -delete
+          sleep 86400
+        done
+
+volumes:
+  dbdata:
+  caddydata:
+  caddyconfig:

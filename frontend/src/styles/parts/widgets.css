@@ -1,0 +1,20 @@
+/* =====================================================================
+   Admin widget dashboard — the grid and widgets are utilities in
+   src/pages/dashboard/WidgetGrid.tsx and AdminDashboard.tsx. Left here:
+   ===================================================================== */
+
+/* "View all" link in a widget header (also used on the Plans page). */
+.dk-viewall { @apply whitespace-nowrap text-[12.5px] font-semibold text-primary no-underline; }
+.dk-viewall:hover { @apply underline; }
+
+/* Sort buttons in the dashboard tables: `all: unset` has to come before the
+   rest, which an arbitrary-property utility can't guarantee. */
+.dk-table th button {
+  all: unset;
+  @apply box-border flex w-full cursor-pointer items-center gap-1 whitespace-nowrap p-2
+         text-xs font-bold uppercase tracking-[0.05em] text-muted;
+}
+.dk-table th button:hover { @apply text-ink; }
+
+/* While a widget is dragged (class toggled on <body> by WidgetGrid). */
+body.wg-dragging, body.wg-dragging * { @apply !cursor-grabbing !select-none; }

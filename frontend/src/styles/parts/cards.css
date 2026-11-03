@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Shared primitives, part 1 — glass cards and page grids.
+   (The app shell itself — sidebar, topbar, page header — is styled with
+   utilities in src/layout/AppLayout.tsx and src/components/PageHeader.tsx.)
+   ========================================================================== */
+
+/* Cards deliberately skip backdrop-filter: a dashboard shows 10-20 of them at once,
+   and re-blurring that many layers over an animated backdrop stalls the compositor.
+   A slightly more opaque tint plus the edge sheen reads as the same glass. */
+.card {
+  @apply relative overflow-hidden rounded-lg border border-solid border-line bg-glass-solid
+         shadow-[shadow:var(--shadow-sm),inset_0_1px_0_var(--glass-edge-top)];
+}
+
+/* hairline sheen along the top edge — the tell of real glass */
+.card::before {
+  @apply pointer-events-none absolute inset-x-0 top-0 h-px content-['']
+         bg-[linear-gradient(90deg,transparent,var(--glass-edge),transparent)];
+}
+
+.card-header {
+  @apply flex items-center justify-between gap-3 border-0 border-b border-solid border-line px-4 py-3;
+}
+.card-header h2 { @apply text-md tracking-[-0.005em]; }
+.card-body { @apply p-4; }
+.card + .card { @apply mt-4; }
+
+/* Two/three-column page grids: used together with the `grid gap-4` utilities. */
+.grid-2 { @apply grid-cols-2; }
+.grid-3 { @apply grid-cols-3; }
+@media (max-width: 1180px) { .grid-3 { @apply grid-cols-2; } }
+@media (max-width: 800px) { .grid-2, .grid-3 { @apply grid-cols-[1fr]; } }

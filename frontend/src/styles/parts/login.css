@@ -1,0 +1,38 @@
+/* =====================================================================
+   Login — split hero + glass card (pastel light; dark variant below).
+   The layout lives in utilities in LoginPage.tsx; this block only holds the
+   page's own colour tokens (--lg-*), which the utilities read via var().
+   ===================================================================== */
+.lg {
+  --lg-ink: #13234b;
+  --lg-ink-2: #4a5b7c;
+  --lg-ink-3: #7a879f;
+  --lg-card: rgba(255, 255, 255, 0.72);
+  --lg-card-border: rgba(255, 255, 255, 0.9);
+  --lg-field: rgba(255, 255, 255, 0.85);
+  --lg-field-border: #e3e8f2;
+  --lg-focus: #3b82f6;
+  --lg-grad: linear-gradient(90deg, #38bdf8 0%, #6366f1 55%, #a855f7 100%);
+  --lg-logo: linear-gradient(140deg, #22d3ee 0%, #3b82f6 45%, #a855f7 80%, #ec4899 100%);
+  --lg-bg:
+    radial-gradient(60% 70% at 8% 10%, #c9ecff 0%, transparent 60%),
+    radial-gradient(50% 60% at 92% 8%, #ead9ff 0%, transparent 60%),
+    radial-gradient(55% 60% at 70% 100%, #ffe3f1 0%, transparent 60%),
+    radial-gradient(50% 55% at 0% 100%, #dcd8ff 0%, transparent 60%),
+    linear-gradient(135deg, #eef6ff 0%, #f6f1ff 50%, #fdf3fb 100%);
+}
+:root:not([data-theme='light']) .lg {
+  --lg-ink: #e8eefc;
+  --lg-ink-2: #a9b6d3;
+  --lg-ink-3: #7d8aa8;
+  --lg-card: rgba(20, 27, 48, 0.72);
+  --lg-card-border: rgba(255, 255, 255, 0.08);
+  --lg-field: rgba(255, 255, 255, 0.05);
+  --lg-field-border: rgba(255, 255, 255, 0.12);
+  --lg-focus: #60a5fa;
+  --lg-bg:
+    radial-gradient(60% 70% at 8% 10%, rgba(56, 189, 248, 0.20) 0%, transparent 60%),
+    radial-gradient(50% 60% at 92% 8%, rgba(168, 85, 247, 0.22) 0%, transparent 60%),
+    radial-gradient(55% 60% at 70% 100%, rgba(236, 72, 153, 0.14) 0%, transparent 60%),
+    linear-gradient(135deg, #0b1020 0%, #111632 50%, #160f2a 100%);
+}
