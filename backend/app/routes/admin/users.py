@@ -11,8 +11,10 @@ from ...deps import Ctx, json_body, require
 from ...errors import AppError
 from ...query import id_param, paged_query, parse_list, parse_sort, qs, qs_enum, to_camel
 from ...respond import ok
+from ...config import config
 from ...security import hash_password
 from ...services.audit import log_audit
+from ...services.prod_guard import DEFAULT_PASSWORDS
 from ...services.protected_account import ADMIN_ROLE_CODE, is_protected_username, protected_error
 from ...services.session_revocation import revoke_sessions
 
@@ -55,6 +57,17 @@ roles_schema = z.object({"roleIds": z.array(z.number().int().positive())})
 _perm = require("USER_MANAGE")
 
 router = APIRouter()
+
+
+def _refuse_default_password(pw: str) -> None:
+    """In production a published default password (Pass@100%, ChangeMe@123) is refused:
+    the API would refuse to start with such an account (services/prod_guard.py)."""
+    if config.env == "production" and pw in DEFAULT_PASSWORDS:
+        raise AppError(
+            400,
+            "VALIDATION_ERROR",
+            "This is a published default password and is not allowed on the live server. Choose another password.",
+        )
 
 
 def _js_number(s: str) -> Any:
@@ -151,6 +164,7 @@ def create_user(body: Any = Depends(json_body), ctx: Ctx = Depends(_perm)):
     b = create_schema.parse(body)
     user = ctx.user
     assert user is not None
+    _refuse_default_password(b["password"])
     password_hash = hash_password(b["password"], BCRYPT_COST)
     with transaction() as conn:
         r = conn.execute(
@@ -187,6 +201,8 @@ def create_user(body: Any = Depends(json_body), ctx: Ctx = Depends(_perm)):
 @router.put("/{id}")
 def update_user(id: str, body: Any = Depends(json_body), ctx: Ctx = Depends(_perm)):
     b = update_schema.parse(body)
+    if "password" in b:
+        _refuse_default_password(b["password"])
     uid = id_param(id)
     user = ctx.user
     assert user is not None
