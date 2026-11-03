@@ -20,6 +20,10 @@ DIR=/opt/klicense
 REGION=$(curl -s -H "X-aws-ec2-metadata-token: $(curl -s -X PUT http://169.254.169.254/latest/api/token -H 'X-aws-ec2-metadata-token-ttl-seconds: 60')" http://169.254.169.254/latest/meta-data/placement/region || echo ap-south-1)
 
 echo "== 1/6 base setup (Docker, firewall, swap, clock)"
+export DEBIAN_FRONTEND=noninteractive
+command -v cloud-init >/dev/null && cloud-init status --wait >/dev/null 2>&1 || true
+# first boot: wait until unattended-upgrades releases the package lock
+for i in $(seq 1 60); do fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock >/dev/null 2>&1 || break; sleep 10; done
 if ! command -v docker >/dev/null; then
   curl -fsSL "https://raw.githubusercontent.com/aadityapa/k-license-center/main/deploy/server-setup.sh" | bash
 fi
@@ -63,7 +67,7 @@ else
   sed -i "s|^DOMAIN=.*|DOMAIN=$DOMAIN|; s|^DB_HOST=.*|DB_HOST=$RDS_HOST|; s|^DB_USER=.*|DB_USER=$DB_USER|" .env
   python3 - "$DB_PASS" <<'PY'
 import sys,re
-p='.env'; s=open(p).read(); s=re.sub(r'(?m)^DB_PASSWORD=.*$', 'DB_PASSWORD='+sys.argv[1].replace('\\','\\\\'), s); open(p,'w').write(s)
+p='.env'; s=open(p).read(); s=re.sub(r'(?m)^DB_PASSWORD=.*$', lambda m: 'DB_PASSWORD='+sys.argv[1], s); open(p,'w').write(s)
 PY
 fi
 chmod 600 .env
@@ -87,6 +91,9 @@ else
   $COMPOSE run --rm api python -m scripts.prod_init </dev/null || true
 fi
 $COMPOSE up -d
+# RDS rotates the DB password in Secrets Manager: pick up a new one every hour
+printf '#!/bin/sh\n%s/deploy/refresh-db-secret.sh\n' "$DIR" > /etc/cron.hourly/klicense-db-secret
+chmod +x /etc/cron.hourly/klicense-db-secret "$DIR/deploy/refresh-db-secret.sh"
 sleep 20
 curl -fsS "https://$DOMAIN/health/db" && echo || echo "(HTTPS certificate may need another minute: curl https://$DOMAIN/health/db)"
 echo
