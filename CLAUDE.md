@@ -57,7 +57,7 @@ verification/       server/portal checks only (postgres/*.mjs, portal-e2e, sdk-c
 integration-examples/  generic licence-client SDKs (C#, Node), curl examples
 legacy/             archived old VehSim licence server (not used)
 deploy/              AWS production kit: docker-compose.yml, api/web Dockerfiles, Caddyfile, .env.production.example, server-setup.sh, backup-to-s3.sh, restore.sh, build-setup-aws.bat, AWS-DEPLOY.md
-apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, git-push.bat, .gitignore/.gitattributes, RELEASE-CHECKLIST.md, README.md
+apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, git-push.bat, git-set-author.bat, .gitignore/.gitattributes, RELEASE-CHECKLIST.md, README.md
 ```
 
 **Folder rule (D15):** this folder holds only licence-server/portal code. App-specific files live in the app:
@@ -160,3 +160,4 @@ apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, git-push.bat, .
 - 03-Nov-2026 — Git: licence folder is a git repo (`main`), `.gitignore` (secrets/builds excluded), `.gitattributes` (LF for .sh), `git-push.bat`, `deploy/update.sh` (server: git pull + rebuild + restart). AWS step next.
 - 03-Nov-2026 — Git remote set to https://github.com/aadityapa/k-license-center.git; push must run on the PC (`git-push.bat`, GitHub sign-in).
 - 03-Nov-2026 — Push as aadityapa: remote URL carries the user (`aadityapa@github.com`), `git-push.bat` fixed to that account (a cached karanskb login was being used).
+- 03-Nov-2026 — Pushed to GitHub (public, by user's choice). Commits show karanskb because the author e-mail karan.singh@karnex.in belongs to that account; `git-set-author.bat <aadityapa-email>` re-signs all commits as aadityapa and force-pushes (waiting for the e-mail).
