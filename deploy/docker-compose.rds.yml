@@ -1,0 +1,46 @@
+# K License Center on AWS with the database on Amazon RDS (PostgreSQL).
+# Same as docker-compose.yml but without the local `db` / `backup` containers:
+# DB_HOST / DB_USER / DB_PASSWORD / DB_SSL come from deploy/.env (written by bootstrap-aws.sh).
+# RDS keeps its own automated backups (retention set on the RDS instance).
+#   docker compose -f docker-compose.rds.yml up -d
+name: klicense
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/api.Dockerfile
+    image: klicense-api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      CORS_ORIGINS: https://${DOMAIN}
+      TZ: ${TZ:-Asia/Kolkata}
+    expose:
+      - "3001"
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/web.Dockerfile
+    image: klicense-web
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in deploy/.env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      ADMIN_ALLOW_CIDRS: ${ADMIN_ALLOW_CIDRS:-0.0.0.0/0 ::/0}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on:
+      - api
+
+volumes:
+  caddydata:
+  caddyconfig:

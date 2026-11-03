@@ -6,8 +6,10 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 git -C .. pull --ff-only
-docker compose build
-docker compose up -d
-docker compose ps
+# Database on Amazon RDS (bootstrap-aws.sh) or in a local container (docker-compose.yml)?
+if grep -q '^RDS_SECRET_ARN=' .env 2>/dev/null; then F=docker-compose.rds.yml; else F=docker-compose.yml; fi
+docker compose -f "$F" build
+docker compose -f "$F" up -d
+docker compose -f "$F" ps
 sleep 5
 curl -fsS "https://$(grep -E '^DOMAIN=' .env | cut -d= -f2)/health/db" && echo
