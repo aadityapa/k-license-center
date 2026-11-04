@@ -179,6 +179,34 @@ def newest_setup(d: str, since: float) -> str | None:
     return exes[0][0] if exes else None
 
 
+_VER = re.compile(r"(\d+(?:\.\d+){1,3})")
+
+
+def next_version(out_dir: str, iss: str) -> tuple[str, str]:
+    """(version, define) for this build: the highest version among the Setup.exe files already
+    in out_dir, last number + 1 (so 2.0.37 -> 2.0.38); else the default in the .iss.
+    `define` is the .iss symbol holding the version (MyAppVersion / AppVersion)."""
+    text = open(iss, encoding="utf-8", errors="replace").read()
+    m = re.search(r'#define\s+(\w*Version)\s+"([\d.]+)"', text)
+    define = m.group(1) if m else "MyAppVersion"
+    default = m.group(2) if m else "1.0.0"
+    best: tuple[int, ...] | None = None
+    try:
+        for f in os.listdir(out_dir):
+            if not f.lower().endswith(".exe"):
+                continue
+            for v in _VER.findall(f):
+                t = tuple(int(x) for x in v.split("."))
+                if len(t) >= 3 and (best is None or t > best):
+                    best = t
+    except OSError:
+        pass
+    if best is None:
+        return default, define
+    nxt = best[:-1] + (best[-1] + 1,)
+    return ".".join(str(x) for x in nxt), define
+
+
 def _rm(p: str) -> None:
     """rmSync(p, {recursive: true, force: true})."""
     if os.path.isdir(p) and not os.path.islink(p):
@@ -249,12 +277,16 @@ def build_one(app: dict[str, Any], iscc: str, url: str) -> str:
                 raise RuntimeError(f"{f} still trusts the DEVELOPMENT signing key - not for customers (RELEASE-CHECKLIST.md).")
             say("        note: the app still trusts the DEVELOPMENT signing key (fine for testing; see RELEASE-CHECKLIST.md)")
 
-    say("  [2/3] building (self-contained, 64-bit) - a few minutes ...")
+    rel_out = app.get("setupOutput") or join(os.path.dirname(app["installerScript"]) or ".", "Output")
+    out_dir = join(repo, *re.split(r"[\\/]", rel_out))
+    version, ver_define = next_version(out_dir, iss)
+    say(f"  [2/3] building version {version} (self-contained, 64-bit) - a few minutes ...")
     if os.path.exists(publish_dir):
         _rm(publish_dir)
     ok = run("dotnet", [
         "publish", project, "-c", "Release", "-r", "win-x64", "--self-contained", "true",
-        "-p:PublishSingleFile=false", "-o", publish_dir, "--nologo",
+        "-p:PublishSingleFile=false", f"-p:Version={version}", f"-p:FileVersion={version}",
+        f"-p:AssemblyVersion={version}", "-o", publish_dir, "--nologo",
         "--source", "https://api.nuget.org/v3/index.json",
     ])
     if not ok:
@@ -269,13 +301,11 @@ def build_one(app: dict[str, Any], iscc: str, url: str) -> str:
     if os.path.exists(first_target):
         shutil.copyfile(first_target, join(publish_dir, config_file))
 
-    say("  [3/3] creating Setup.exe ...")
+    say(f"  [3/3] creating Setup.exe {version} ...")
     # The Setup.exe belongs to the app, so it goes into the app's own repo.
-    rel_out = app.get("setupOutput") or join(os.path.dirname(app["installerScript"]) or ".", "Output")
-    out_dir = join(repo, *re.split(r"[\\/]", rel_out))
     os.makedirs(out_dir, exist_ok=True)
     started = time.time() * 1000 - 1000
-    if not run(iscc, ["/Q", "/DArch=x64", f"/O{out_dir}", iss]):
+    if not run(iscc, ["/Q", "/DArch=x64", f"/D{ver_define}={version}", f"/O{out_dir}", iss]):
         raise RuntimeError("installer compile failed - details in build-setup.log")
     setup = newest_setup(out_dir, started)
     if not setup:
