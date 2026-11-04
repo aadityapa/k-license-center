@@ -55,13 +55,9 @@ const NAV: NavSection[] = [
       { label: 'Email Outbox', to: '/email-outbox', icon: 'file-text', perms: ['EMAIL_OUTBOX_VIEW'] },
     ],
   },
-  {
-    title: 'Authorization',
-    items: [
-      { label: 'API Clients', to: '/api-clients', icon: 'shield', perms: ['APICLIENT_MANAGE'] },
-      { label: 'API Logs', to: '/api-logs', icon: 'list', perms: ['AUDIT_VIEW'] },
-    ],
-  },
+  // API Clients (/api-clients) and API Logs (/api-logs) are hidden from the menu on purpose
+  // (user's request, 04-Nov-2026): the apps' clients are issued by scripts, staff don't manage
+  // them. The pages still work by URL for troubleshooting.
   {
     title: 'Users & Security',
     items: [
