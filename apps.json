@@ -1,10 +1,11 @@
 {
   "//": "Applications licensed by this server. Add one block per app (copy the Vehicle SIM one).",
   "//1": "start.bat connects every app listed here; build-setup.bat builds the Setup.exe of one or all.",
-  "//2": "serverUrl: the address the installed apps use to reach this server. Leave empty to use",
-  "//3": "this PC's network address (fine inside the office). For customers outside, put the",
-  "//4": "permanent https address, e.g. https://license.karnex.in/api/v1",
-  "serverUrl": "",
+  "//2": "serverUrl: the address EVERY build of every app uses (dev builds, installers, all PCs).",
+  "//3": "It is the live server. With an https address here, start.bat never writes licensing.dat:",
+  "//4": "the file is issued on the live server (scripts.issue_app_config) and stamped into every",
+  "//5": "copy on this PC with scripts.install_app_config. Clear it only to test apps against a local server.",
+  "serverUrl": "https://license.karnexgroup.com/api/v1",
 
   "apps": [
     {

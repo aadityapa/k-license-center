@@ -9,6 +9,7 @@ deploy/build-aws.cfg
 deploy/backups/
 licensing.dat
 licensing.json
+backend/apps-live.txt
 *.pem
 *.pfx
 *.key

@@ -35,12 +35,25 @@ def main() -> int:
         return 0
     url = server_url(file, _arg("url"))
     print(f"  Apps will reach the licence server at {url}", flush=True)
+    live = url.startswith("https://") and "--local" not in sys.argv[1:]
+    if live:
+        # The apps belong to the LIVE server (apps.json serverUrl). This local server only
+        # makes sure the products exist for the local portal; it never touches the apps'
+        # licensing.dat (that is issued on the live server: scripts.issue_app_config, then
+        # scripts.install_app_config here). `--local` forces the old behaviour for testing.
+        print("  (live server address: products checked locally only, licensing.dat files untouched)", flush=True)
     db = db_client()
     failed = 0
     try:
         for app in apps:
             try:
-                r = configure_app(db, app, url, {"newClient": "--new-client" in sys.argv[1:]})
+                if live:
+                    from scripts.apps import _ensure_product, _q
+                    admin = _q(db, "SELECT user_id FROM users WHERE username = 'admin'")
+                    _ensure_product(db, app, admin[0]["user_id"] if admin else None, lambda s: print(s, flush=True))
+                    r = {"ok": True, "message": "product ok (licensing.dat issued by the live server)"}
+                else:
+                    r = configure_app(db, app, url, {"newClient": "--new-client" in sys.argv[1:]})
                 print(f"  {'OK  ' if r['ok'] else 'SKIP'} {app['name']}: {r['message']}", flush=True)
                 if not r["ok"]:
                     failed += 1

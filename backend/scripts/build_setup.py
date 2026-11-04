@@ -199,14 +199,23 @@ def build_one(app: dict[str, Any], iscc: str, url: str) -> str:
     if not os.path.exists(iss):
         raise RuntimeError(f"installer script not found: {iss}")
 
-    if os.environ.get("KLC_SKIP_CONFIGURE") == "1":
-        # deploy\build-setup-live.bat: the database is not reachable from this PC; the
-        # licensing.dat was issued on the server (scripts.issue_app_config) and saved already.
+    if os.environ.get("KLC_SKIP_CONFIGURE") == "1" or url.startswith("https://"):
+        # Live server (apps.json serverUrl, or deploy\build-setup-live.bat): its database is not
+        # reachable from this PC; the licensing.dat was issued on the server
+        # (scripts.issue_app_config) and stamped here (scripts.install_app_config).
         say("  [1/3] using the licensing.dat issued by the server (no database access needed)")
         cfg = app.get("configFile") if app.get("configFile") is not None else "licensing.dat"
         tg = (app.get("configTargets") or [f"installer\\{cfg}"])[0]
-        if not os.path.exists(join(repo, *re.split(r"[\\/]", tg))):
+        tp = join(repo, *re.split(r"[\\/]", tg))
+        if not os.path.exists(tp):
             raise RuntimeError(f"{tg} is missing in {repo} - issue it on the server first (scripts.issue_app_config)")
+        from scripts.licensing_file import decrypt_licensing_config
+        conf = decrypt_licensing_config(open(tp, encoding="utf-8", errors="replace").read()) or {}
+        if str(conf.get("baseUrl", "")).rstrip("/") != url.rstrip("/"):
+            raise RuntimeError(
+                f"{tg} points to {conf.get('baseUrl') or '?'} instead of {url}. "
+                "Issue it on the live server (scripts.issue_app_config) and stamp it with scripts.install_app_config."
+            )
     else:
         say("  [1/3] connecting to the licence server ...")
         db = db_client()
