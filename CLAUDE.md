@@ -194,3 +194,4 @@ apps.json, start.bat, build-setup.bat, svn-commit-apps.bat/.ps1, .gitignore/.git
 - 03-Nov-2026 — Live installers built by the user: KarnexVBS-Setup-1.0.47-x64, KStackConfigurator-Setup-2.0.13, DiagnosticStudioSetup-1.0.16 (server https://license.karnexgroup.com/api/v1, live signing key).
 - 04-Nov-2026 — API Clients and API Logs hidden from the portal menu (user's request); pages still reachable at /api-clients and /api-logs.
 - 04-Nov-2026 — User: no more computer use / Git GUI; Claude gives commands instead (D24). Commits up to 3d830ac waiting to be pushed by the user.
+- 04-Nov-2026 — User pushed to GitHub; server updated via SSM update.sh (now at 1637aed, menu change live), DB klicense-db2 connected (health db up, schema ok), api healthy.
